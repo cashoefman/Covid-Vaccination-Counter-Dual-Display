@@ -13,6 +13,9 @@
 # limitations under the License.
 #
 # Basic Setup
+#
+# Import setting from config file 
+import config
 # Get a device ID, I am not really using that for anything in this example but some APIs like things like that
 #
 import machine
@@ -20,6 +23,7 @@ device_id = ('{:02x}{:02x}{:02x}{:02x}'.format(machine.unique_id()[0], machine.u
 #
 # Start Display
 import ssd1306
+from machine import Pin
 #pin16 = machine.Pin(16, machine.Pin.OUT) # NOTE: On an Heltec Wifi Kit 32 you have to set pin 16 to high to turn on the screen
 #pin16.value(1)
 #
@@ -47,7 +51,7 @@ oled2.text('Starting...', 0, 0)
 oled2.show()
 #
 # Check the battery and show the battery status on the second screen
-adc_pin = machine.Pin(33)
+adc_pin = machine.Pin(config.device_config['adc_pin_battery'])
 adc = machine.ADC(adc_pin)
 adc.atten(adc.ATTN_11DB)
 val = adc.read()
@@ -58,10 +62,6 @@ print(percentage, '%')
 oled2.text('Battery: ' + str(volt) + 'V', 0, 30)
 oled2.text(str(round(val)) + '      ' + str(percentage) + '%', 0, 40)
 oled2.show()
-#
-# Import some setting from config file & Set the Led Pin
-import config
-from machine import Pin 
 #
 # Set Built-in LED pin
 led_pin = machine.Pin(config.device_config['led_pin'], Pin.OUT)

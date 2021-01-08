@@ -15,14 +15,23 @@
 # Configuration File
 #
 device_config = {
-  'led_pin': 25
+  'led_pin': 2, # Pin for an onboard / connected Status LED
+  'adc_pin_battery': 33, # Pin the battery is hooked up to to get battery voltage
 }
 
 wifi_config = {
-    'ssid':'YOURSSID',
-    'password':'YOURPASSWORD'
+  'ssid':'<YOUR SSID>',
+  'password':'<YOUR WIFI PASSWORD>'
 }
-# Probably should add the API URL in the config file too
+
+# API Config Values
 api_config = {
-  'api_url' : 'URL_TO_YOUR_API_WITH_ROUTE'
+  'api_url' : 'http://my-json-server.typicode.com/cashoefman/api-server/counts',
+  'api_interval' : 30,
+  'time_server' : 'time.google.com'
+}
+
+# Set Some Other Values
+app_config = {
+  'data_older' : 5
 }
