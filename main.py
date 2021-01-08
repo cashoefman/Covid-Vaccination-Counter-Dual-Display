@@ -28,8 +28,8 @@ from machine import Pin
 #pin16.value(1)
 #
 # And Configure the screen
-i2c = machine.I2C(scl=machine.Pin(22), sda=machine.Pin(21))
-oled1 = ssd1306.SSD1306_I2C(128, 64, i2c, addr=60) # 128,64 defines the screen width and height of the first oled
+i2c = machine.I2C(scl=machine.Pin(22), sda=machine.Pin(21)) # 22 and 21 are the SCL and SDA pins the screens are connected to 
+oled1 = ssd1306.SSD1306_I2C(128, 64, i2c, addr=60) # 128,64 defines the screen width and height of the first oled, addr is the address of the screen
 oled2 = ssd1306.SSD1306_I2C(128, 64, i2c, addr=61) # 128,64 defines the screen width and height of the second oled
 #
 # Setup a graphic drawing on both OLED displays, We'll use that later to draw on the screens
@@ -37,7 +37,7 @@ import gfx
 graphics1 = gfx.GFX(128, 64, oled1.pixel)
 graphics2 = gfx.GFX(128, 64, oled2.pixel)
 #
-# Let's put some stuff on the screen as we get started
+# Let's put some text on the screen as we get started
 oled1.fill(0)
 oled1.text('COVID VAC COUNT', 0, 0)
 oled1.text('ID: ' + device_id, 0, 20)
@@ -53,12 +53,16 @@ oled2.show()
 # Check the battery and show the battery status on the second screen
 adc_pin = machine.Pin(config.device_config['adc_pin_battery'])
 adc = machine.ADC(adc_pin)
-adc.atten(adc.ATTN_11DB)
+adc.atten(adc.ATTN_11DB) # ATTN_11DB makes that we can read 0-3.30v on the pin, without this it would read 0-1.00v
 val = adc.read()
+#
+# Now that we have read the input from the adc pin for the battery let's print it and put it on the screen
+# Note: I am still not sure how much good this data is going to do, not sure at what "voltage" the board just stops working
 volt = round(val * (3.3 / 4095),2)
 percentage = round((val * (3.3 / 4095)) / 3.3 * 100)
-print(val, 'V')
-print(percentage, '%')
+print(val, 'adc pin reading')
+print(volt, 'V')
+print('battery at: ', volt, 'V / ', percentage, '%')
 oled2.text('Battery: ' + str(volt) + 'V', 0, 30)
 oled2.text(str(round(val)) + '      ' + str(percentage) + '%', 0, 40)
 oled2.show()
@@ -68,8 +72,7 @@ led_pin = machine.Pin(config.device_config['led_pin'], Pin.OUT)
 led_pin.value(0)
 #
 # Get Wifi Set Up, this should become a function to call later in the loop so you can check on if the Wifi Connection is still up
-# Next time!
-import ntptime
+# or something like that, next time!
 import network
 import time
 wlan = network.WLAN(network.STA_IF)
@@ -94,7 +97,6 @@ led_pin.value(1)
 # Now that we are connected set the time
 from machine import RTC
 import ntptime
-import utime
 ntptime.host = config.api_config['time_server']
 try:
     ntptime.settime()
@@ -102,21 +104,23 @@ except:
     print(".", end="")
     time.sleep(1)
     pass
+#
+# Let's do some things with the local clock
+import utime
 tm = utime.localtime()
 tm = tm[0:3] + (0,) + tm[3:6] + (0,)
 machine.RTC().datetime(tm)
+#
+# Let's get that tm readable
 timestamp = '{:04d}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.000Z'.format(tm[0], tm[1], tm[2], tm[3], tm[4], tm[5])
-print(timestamp)
-timenow = '{:02d}:{:02d}:{:02d}'.format(tm[3], tm[4], tm[5]) 
+timenow = '{:02d}:{:02d}:{:02d}'.format(tm[3], tm[4], tm[5])  
+datenow = '{:02d}-{:02d}-{:04d}'.format(tm[1], tm[2], tm[0])
+#
+# Let's output the time and data info
+print(timestamp, timenow, datenow)
 oled1.text('Time: ' + timenow, 0, 50)    
 oled1.show()
 time.sleep(5) # Waiting a few seconds just for the fun of it
-#
-# Set the Time, not really using this anywhere but who knows if I want to display the time at some point somewhere
-tm = utime.localtime()
-timestamp = '{:04d}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.000Z'.format(tm[0], tm[1], tm[2], tm[3], tm[4], tm[5])  
-timenow = '{:02d}:{:02d}:{:02d}'.format(tm[3], tm[4], tm[5])  
-datenow = '{:02d}-{:02d}-{:04d}'.format(tm[1], tm[2], tm[0])
 #
 # GET Latest CDC Data from the test API, probably should check here for a Wifi status but oh well...
 while True:
@@ -132,14 +136,16 @@ while True:
     #
     # Now we go get the latest record and a older record before that with the counts from the API
     response = requests.get(config.api_config['api_url'] + '/' + str(id))
-    response_older = requests.get(config.api_config['api_url'] + '/' + str(id-config.app_config['data_older'])) #Value from config -5 will get data from 5 days ago, -7 will get data from a week ago, presuming the data is updated every day
+    response_older = requests.get(config.api_config['api_url'] + '/' + str(id-config.app_config['data_older'])) # Value from config -5 will get data from 5 days ago, -7 will get data from a week ago, presuming the data is updated every day
     print ('Got API data')
     #
-    # Let's parse the values we need
+    # Let's parse the values we need, first we make them into a JSON string/Dict and close the request to prevent memory issues
     parsed = response.json()
     response.close()
     parsed_older = response_older.json()
     response_older.close()
+    #
+    # Here we parse some of the data from the received JSON
     administered = (parsed['Total_Doses_Administered'])
     distributed = (parsed['Total_Doses_Distributed'])
     dateLastUpdated = (parsed['DataLastUpdated'])
@@ -171,7 +177,7 @@ while True:
     # Turn the Led Off so we know the API Call is completed
     led_pin.value(0)
     #
-    # set the time between API Calls in "about" seconds based on the API Interval setting from the config file
+    # set the time between API Calls in seconds (plus the time that it takes to actually run the script) based on the API Interval setting from the config file
     waiting = config.api_config['api_interval'] 
     for i in range(waiting):
         #
@@ -180,14 +186,14 @@ while True:
         administered_older = (parsed_older['Total_Doses_Administered'])
         distributed_older = (parsed_older['Total_Doses_Distributed'])
         dateLastUpdated_older = (parsed_older['DataLastUpdated'])
-        timedelta = dateLastUpdated - dateLastUpdated_older
-        administered_delta = (administered - administered_older) / timedelta
+        timedelta = dateLastUpdated - dateLastUpdated_older # How many seconds between the two data sets where published in the database
+        administered_delta = (administered - administered_older) / timedelta # We calculate the delta per second for both administered and distributed
         distributed_delta = (distributed - distributed_older) / timedelta
         tmoffset = time.time() + 946684800 # Gotta fix for the fact that Micropython clock doesn't start in 1970
-        secondssince = tmoffset - dateLastUpdated
-        administered_increase = administered_delta * secondssince
+        secondssince = tmoffset - dateLastUpdated # How long since the last set of data was published
+        administered_increase = administered_delta * secondssince # Calculated total increase since the last published data
         distributed_increase = distributed_delta * secondssince
-        administered_calculated = administered + administered_increase
+        administered_calculated = administered + administered_increase # And what we expect the numbers are at about right now.
         distributed_calculated = distributed + administered_increase
         #
         # Print some values so I can see it works in serial
