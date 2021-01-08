@@ -8,7 +8,11 @@ ESP32 Dev Kit v1 with two OLED screens displaying Covid Vaccination Statistics r
 I am trying to learn new things and there is no better way to learn new things than by doing it. What I wanted to do was create a little clock that would display some Covid related statistics, specifically the number vaccines that have been distributed and the number of people that have been vaccinated.
 
 ## How?
+I am going to use a basic ESP32 based Dev Kit with two OLED screens and battery power it. It will connect to a Public API to retrieve the COVID vaccination statistics and display it on the screen.
 
+When I started this project there was no public API available with the COVID Vaccination statistics so for this purpose of this project I manually retrieve the data from the CDC website and add it to a JSON Rest Server that I will connect to from the ESP32. For more information on how to set that up you can check this out my article on [How to setup a JSON REST API Server on Heroku](https://cashoefman.com/how-to-setup-a-json-rest-api-server-on-heroku) or take a look at my Github Repo, [How to setup a local and remote JSON REST API Server in ten-ish easy steps](https://github.com/cashoefman/my-api-server).
+
+For now you could just use [my JSON Server](https://my-json-server.typicode.com/cashoefman/api-server/counts) for it but I am not sure how long that will keep working. 
 ### Hardware Setup
 
 1. ESP32 Dev Kit v1
@@ -36,6 +40,8 @@ And you are set!
 The Git Repo has a file called `example.config.py` just rename that file to `config.py` and update it with your Wifi SSID and Password.
 
 Depending on the ESP 32 board you use and how you wire it you can also update the PINS for any onboard or remote LED and the PIN for the ADC reading the voltage of the battery.
+
+[Kyle Redelinghuys](https://twitter.com/ksredelinghuys)) at the [Covid 19 API](https://covid19api.com) said he will be adding COVID Vaccination Statistic data to his API, once he does that, I will add information on how to use that API. But for now you can use my JSON Server. For this you will also have to update the API_URL to: `https://my-json-server.typicode.com/cashoefman/api-server/counts`.
 #### ssd1306.py
 This is the driver for the OLED screens
 #### gfx.py
