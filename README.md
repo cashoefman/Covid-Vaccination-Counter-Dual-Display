@@ -32,17 +32,13 @@ gfx.py
 config.py
 ```
 And you are set!
-
 #### config.py
-The Git Repo has a file called `exmaple.config.py` just rename that file to config.py and update it with your Wifi SSID and Password.
+The Git Repo has a file called `example.config.py` just rename that file to `config.py` and update it with your Wifi SSID and Password.
 
 Depending on the ESP 32 board you use and how you wire it you can also update the PINS for any onboard or remote LED and the PIN for the ADC reading the voltage of the battery.
-
 #### ssd1306.py
 This is the driver for the OLED screens
-
 #### gfx.py
 This is a library that I used to draw the battery indicator and the timer at the bottom of each OLED screen.
-
 #### main.py
 This is your main "application". Refer to the file itself for fairly detailed comments on what each line does.
