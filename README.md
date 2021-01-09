@@ -21,6 +21,8 @@ For now you could just use [my JSON Server](https://my-json-server.typicode.com/
 4. 82K Ohm and 28K ohm resistors
 5. Micro Switch
 6. A Li-Ion Battery
+7. MCP1700-3302E Voltage Regulator
+8. 100uF electrolytic capacitor and a 100nF ceramic capacitor
 
 I will provide this [Fritzing diagram](Images/Covid%20Clock.fzz) for the setup. However I don't guarantee anything and am not very experienced with electronics so don't blame me if the diode on your ESP32 Dev board starts smoking or you blow up the USB port on your brand new Mac Book M1.
 
