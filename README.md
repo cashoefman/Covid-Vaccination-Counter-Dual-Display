@@ -1,6 +1,6 @@
 # Covid-Vaccination-Counter-Dual-Display
 
-ESP32 Dev Kit v1 with two OLED screens displaying Covid Vaccination Statistics retreived from a public API
+ESP32 Dev Kit v1 with two OLED screens running Micropython, displaying Covid Vaccination Statistics retrieved from a public API.
 
 ![](Images/Set%20Up.png)
 
@@ -22,7 +22,13 @@ For now you could just use [my JSON Server](https://my-json-server.typicode.com/
 5. Micro Switch
 6. A Li-Ion Battery
 
-I will provide a fritzing diagram for the setup. Note that in order for the displays to work you have to change the address of the second display. On the displays I used you can do that by moving the "IIC Adress Select" SMD Resistor.
+I will provide this [Fritzing diagram](Images/Covid%20Clock.fzz) for the setup. However I don't guarantee anything and am not very experienced with electronics so don't blame me if the diode on your ESP32 Dev board starts smoking or you blow up the USB port on your brand new Mac Book M1.
+
+![](Images/Covid%20Clock_bb.jpg)
+
+Note that in order for the displays to work you have to change the address of the second display. On the displays I used you can do that by moving the "IIC Adress Select" SMD Resistor.
+
+
 
 ![](Images/OLED%20Screen.png)
 
