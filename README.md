@@ -4,7 +4,7 @@ ESP32 Dev Kit v1 with two OLED screens running Micropython, displaying Covid Vac
 
 ![](Images/Set%20Up.png)
 
-##Why?
+## Why?
 I am trying to learn new things and there is no better way to learn new things than by doing it. What I wanted to do was create a little clock that would display some Covid related statistics, specifically the number vaccines that have been distributed and the number of people that have been vaccinated.
 
 ## How?
