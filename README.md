@@ -17,22 +17,54 @@ For now you could just use [my JSON Server](https://my-json-server.typicode.com/
 
 1. ESP32 Dev Kit v1
 2. .96" OLED Display
-3. TP4056A Li-Ion Battery Charging Module
-4. 82K Ohm and 28K ohm resistors
-5. Micro Switch
-6. A Li-Ion Battery
-7. MCP1700-3302E Voltage Regulator
-8. 100uF electrolytic capacitor and a 100nF ceramic capacitor
+3. Micro Switch
+4. A Li-Ion Battery
+5. TP4056A Li-Ion Battery Charging Module
+6. MCP1700-3302E Voltage Regulator
+7. 100uF electrolytic capacitor and a 100nF ceramic capacitor
+8. 82K Ohm and 28K ohm resistors
 
 I will provide this [Fritzing diagram](Images/Covid%20Clock.fzz) for the setup. However I don't guarantee anything and am not very experienced with electronics so don't blame me if the diode on your ESP32 Dev board starts smoking or you blow up the USB port on your brand new Mac Book M1.
 
 ![](Images/Covid%20Clock_bb.jpg)
 
-Note that in order for the displays to work you have to change the address of the second display. On the displays I used you can do that by moving the "IIC Adress Select" SMD Resistor.
+##### 1. ESP32 Dev Kit v1
+The ESP32 Dev Kit v1 is a fairly standard dev board, you can buy one on Amazon for a around $10. We will start by putting it in a breadboard. I made it look nice in the Fritzing Diagram but you might notice that in the image I am using two breadboards, the module is just slightly to wide! for the breadboard. I have heard there are some breadboards with 6 pins but I've not seen any for sale.
 
-
+##### 2. .96" OLED Display
+The .96" I2C OLED displays you can also get on Amazon for $3 to $5 each. I bought a set of 4 from Makerfocus.
 
 ![](Images/OLED%20Screen.png)
+
+Note that in order for the displays to work you have to change the address of the second display. On the displays I used you can do that by moving the "IIC Adress Select" SMD Resistor. It is a little tricky but with a decent standard soldering iron you get this done. 
+
+##### 3. Micro Switch
+The switch makes it easy to reset the board if needed. If you pull the EN pin to ground the board reboots.
+
+##### 4. A Li-Ion Battery
+Whatever you have lying around should work. This is where it get a little tricky though. The battery that I used when fully charged outputs 4.2v and I am planning on powering the board through the 3.3v pin. So we need to reduce the power to no more than 3.3v or you will see magic blue smoke coming from the board! More on that in 6.
+
+##### 5. TP4056A Li-Ion Battery Charging Module
+I had a few of these laying around so repurposed one so I didn't have to deal with anything around designing something for that.
+
+##### 6. MCP1700-3302E Voltage Regulator
+Tons of options here but again I had a few of these so I figured I'd use them. This module takes the output voltage from the Li-On battery and reduces it to 3.3v
+
+##### 7. 100uF electrolytic capacitor and a 100nF ceramic capacitor
+To stabalize the output, as I understand it you have to add capacitors over the output and ground pin of the Voltage Regulator.
+
+##### 8. 82K Ohm and 28K ohm resistors
+And because I want to be able to measure the output of the battery and use that in my code to later to display the battery 100% we need to bring back the range of the voltage that we are going to measure to 0-3.3v. 
+
+The ADC on the board can measure different voltage ranges, 0-1v or 0-3.3v and you will see in the code how you can set what the range is that the ADC will measure.
+   
+We adjust the voltage range by adding resistors between Ground and the ADC pin and the battery output line the ADC Pin.
+
+You can calculate the resistor values with this formula:
+```
+Vout = (4.2*82k)/(22k + 82k) = 3.3V
+```
+I used 22K and 82K just because I could find those quickly in my pile of resistor.
 
 ### Software Setup
 
