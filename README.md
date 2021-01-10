@@ -21,7 +21,7 @@ For now you could just use [my JSON Server](https://my-json-server.typicode.com/
 4. A Li-Ion Battery
 5. TP4056A Li-Ion Battery Charging Module
 6. MCP1700-3302E Voltage Regulator
-7. 100uF electrolytic capacitor and a 100nF ceramic capacitor
+7. 1000uF 16V electrolytic capacitor and a 100nF ceramic capacitor
 8. 82K Ohm and 28K ohm resistors
 
 I will provide this [Fritzing diagram](Images/Covid%20Clock.fzz) for the setup. However I don't guarantee anything and am not very experienced with electronics so don't blame me if the diode on your ESP32 Dev board starts smoking or you blow up the USB port on your brand new Mac Book M1.
@@ -30,6 +30,8 @@ I will provide this [Fritzing diagram](Images/Covid%20Clock.fzz) for the setup. 
 
 ##### 1. ESP32 Dev Kit v1
 The ESP32 Dev Kit v1 is a fairly standard dev board, you can buy one on Amazon for a around $10. We will start by putting it in a breadboard. I made it look nice in the Fritzing Diagram but you might notice that in the image I am using two breadboards, the module is just slightly to wide! for the breadboard. I have heard there are some breadboards with 6 pins but I've not seen any for sale.
+
+![ESP Dev Kit v1](Images/ESP32-Pinout.jpg)
 
 ##### 2. .96" OLED Display
 The .96" I2C OLED displays you can also get on Amazon for $3 to $5 each. I bought a set of 4 from Makerfocus.
@@ -47,11 +49,14 @@ Whatever you have lying around should work. This is where it get a little tricky
 ##### 5. TP4056A Li-Ion Battery Charging Module
 I had a few of these laying around so repurposed one so I didn't have to deal with anything around designing something for that.
 
+![TP4056A](Images/TP4056A-Li-ion-Battery-Charging-Module-Pinout_0.png)
+
 ##### 6. MCP1700-3302E Voltage Regulator
 Tons of options here but again I had a few of these so I figured I'd use them. This module takes the output voltage from the Li-On battery and reduces it to 3.3v
+![MCP1700-3302E](Images/MCP1700-3302E.png)
 
-##### 7. 100uF electrolytic capacitor and a 100nF ceramic capacitor
-To stabalize the output, as I understand it you have to add capacitors over the output and ground pin of the Voltage Regulator.
+##### 7. Capacitors
+To stabalize the output, as I understand it you have to add capacitors over the output and ground pin of the voltage regulator. I added a 1000uF 16V electrolytic capacitor and a 100nF ceramic capacitor
 
 ##### 8. 82K Ohm and 28K ohm resistors
 And because I want to be able to measure the output of the battery and use that in my code to later to display the battery 100% we need to bring back the range of the voltage that we are going to measure to 0-3.3v. 
